@@ -1,0 +1,16 @@
+---
+import { COMPANY } from "../lib/site";
+---
+<dl class="facts">
+  <dt>Полное наименование</dt><dd>{COMPANY.full}</dd>
+  <dt>Сокращённое наименование</dt><dd>{COMPANY.operator}</dd>
+  <dt>ИНН / КПП</dt><dd class="sku">{COMPANY.inn} / {COMPANY.kpp}</dd>
+  <dt>ОГРН</dt><dd class="sku">{COMPANY.ogrn}</dd>
+  <dt>Адрес</dt><dd>{COMPANY.address}</dd>
+  <dt>Банк</dt><dd>{COMPANY.bank}</dd>
+  <dt>Расчётный счёт</dt><dd class="sku">{COMPANY.account}</dd>
+  <dt>Корр. счёт</dt><dd class="sku">{COMPANY.corr}</dd>
+  <dt>БИК</dt><dd class="sku">{COMPANY.bik}</dd>
+  <dt>Телефон</dt><dd><a href={`tel:${COMPANY.tel}`}>{COMPANY.phone}</a></dd>
+  <dt>E-mail</dt><dd><a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a></dd>
+</dl>

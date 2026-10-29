@@ -1,0 +1,80 @@
+---
+import Base from "../../layouts/Base.astro";
+import Icon from "../../components/Icon.astro";
+import { models, modelView, partsOf, assemblies, manual, HIDDEN_SPECS } from "../../lib/data";
+import type { Model } from "../../lib/data";
+import { COMPANY, url } from "../../lib/site";
+export const getStaticPaths = () => models.map((m) => ({ params: { slug: m.slug }, props: { m } }));
+const { m } = Astro.props as { m: Model };
+const v = modelView[m.id];
+const ph = v.photos[0];
+const hasManual = manual.models.includes(m.id);
+const specs = m.specsClient.filter((s) => !HIDDEN_SPECS.has(s.label));
+const ld = { "@context": "https://schema.org", "@type": "Product", name: `Реверс-редуктор ${m.name} ${m.designation}`, mpn: m.designation,
+  category: `Судовые реверс-редукторы, ${m.kind}`, image: new URL(url(ph.f.src), Astro.site).href };
+---
+<Base title={`Реверс-редуктор ${m.name} ${m.designation}`} section="oborudovanie/"
+  crumbs={[["oborudovanie/", "Реверс-редукторы"], [`oborudovanie/${m.slug}/`, m.name]]} image={ph.f.src} jsonld={[ld]}
+  description={`Судовой ${m.kind} реверс-редуктор ${m.name} (${m.designation}): фото, чертежи, технические характеристики${m.variants.length ? ", исполнения" : ""}, каталог запчастей.`}>
+  <div class="prod">
+    <figure class="pphoto">
+      <a href={url(ph.f.src)} data-zoom aria-label="Открыть фото в полном размере">
+        <img src={url(ph.f.src)} width={ph.f.w} height={ph.f.h} alt={`Реверс-редуктор ${m.name} ${m.designation}`} fetchpriority="high" />
+      </a>
+    </figure>
+    <div>
+      <p class="code">{m.designation}</p>
+      <h1>Реверс-редуктор {m.name}</h1>
+      <p class="for">{m.kind[0].toUpperCase() + m.kind.slice(1)} судовой реверс-редуктор</p>
+      {v.text.map((t) => <p>{t}</p>)}
+      <dl class="keys big" style="margin:24px 0">{m.keySpecs.map((k) => <div><dt>{k.label}</dt><dd>{k.value}</dd></div>)}</dl>
+      <div class="buy">
+        <div class="row">
+          <div class="field"><label for="qty">Количество, шт.</label>
+            <div class="qty"><button type="button" data-step="-1" aria-label="Уменьшить количество"><Icon name="minus" size={18} /></button><input id="qty" type="number" inputmode="numeric" min="1" max="9999" value="1"><button type="button" data-step="1" aria-label="Увеличить количество"><Icon name="plus" size={18} /></button></div></div>
+          <button type="button" class="btn" data-rfq-add data-qty="#qty" data-id={`model-${m.id}`} data-d={m.designation} data-n={`Реверс-редуктор ${m.name}`}
+            data-href={url(`oborudovanie/${m.slug}/`)}>Добавить в запрос</button>
+        </div>
+        <p class="status" data-in-list={`model-${m.id}`} hidden><b data-in-list-text></b> <a href={url("zapros/")}>Открыть список</a></p>
+        <p class="status muted">Стоимость, исполнение и срок изготовления по запросу: <a href={`tel:${COMPANY.tel}`}>{COMPANY.phone}</a></p>
+      </div>
+    </div>
+  </div>
+
+  {v.drawings.length > 0 && (
+    <section class="sec" aria-labelledby="h-draw">
+      <div class="sec-head"><h2 id="h-draw">Чертежи</h2></div>
+      <ul class="draws">
+        {v.drawings.map((d) => <li><figure class="drawing">
+          <a href={url(d.f.src)} data-zoom aria-label={`Открыть чертёж: ${d.title}`}><img src={url(d.t.src)} width={d.t.w} height={d.t.h} alt={`Чертёж ${m.name}: ${d.title}`} loading="lazy" /></a>
+          <figcaption>{d.title}</figcaption>
+        </figure></li>)}
+      </ul>
+    </section>
+  )}
+
+  <section class="sec" aria-labelledby="h-spec">
+    <div class="sec-head"><h2 id="h-spec">Технические характеристики</h2></div>
+    <dl class="facts specs">{specs.map((s) => <><dt>{s.label}</dt><dd>{s.value}</dd></>)}</dl>
+  </section>
+
+  {m.variants.length > 0 && (
+    <section class="sec" aria-labelledby="h-var" id="ispolneniya">
+      <div class="sec-head"><h2 id="h-var">Исполнения</h2></div>
+      <div class="tbl-wrap" tabindex="0" role="region" aria-label="Исполнения">
+        <table class="tbl">
+          <thead><tr><th scope="col">Обозначение</th><th scope="col">Вращение</th><th scope="col" class="q">Мощность, л.с.</th><th scope="col" class="q">Передний ход</th><th scope="col" class="q">Задний ход</th><th scope="col" class="q">Муфта, пальцев</th></tr></thead>
+          <tbody>{m.variants.map((x) => <tr><td class="sku">{x.full}</td><td>{x.rot}</td><td class="q">{x.hp}</td><td class="q">{x.fwd}</td><td class="q">{x.rev}</td><td class="q">{x.fingers}</td></tr>)}</tbody>
+        </table>
+      </div>
+    </section>
+  )}
+
+  <section class="sec" aria-labelledby="h-parts">
+    <div class="sec-head"><h2 id="h-parts">Запасные части и документация</h2></div>
+    <div class="btns">
+      <a class="btn" href={url(`katalog/${m.slug}/`)}><Icon name="list-details" size={18} />Каталог запчастей {m.name}{m.id === "rr300" ? `: ${assemblies.length} узлов` : `: ${partsOf(m.id).length} поз.`}</a>
+      {hasManual && <a class="btn ghost" href={url(manual.href)} target="_blank" rel="noopener"><Icon name="file-type-pdf" size={18} />Руководство по эксплуатации, PDF</a>}
+    </div>
+  </section>
+</Base>

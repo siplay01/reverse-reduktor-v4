@@ -1,0 +1,11 @@
+---
+import Base from "../../layouts/Base.astro";
+import ModelCard from "../../components/ModelCard.astro";
+import { modelsInOrder } from "../../lib/data";
+---
+<Base title="Судовые реверс-редукторы РР-300, РР-238, 3Д6, 3Д12" section="oborudovanie/" crumbs={[["oborudovanie/", "Реверс-редукторы"]]}
+  description="Гидравлические реверс-редукторы РР-300 (СБ525-01-13), РР-238 (СБ238-25-01-13) и механические 3Д6 (СБ525-00-4), 3Д12 (СБ1225-00-5): фото, чертежи, характеристики.">
+  <h1>Реверс-редукторы</h1>
+  <p class="lead">Гидравлические РР-300 и РР-238, механические 3Д6 и 3Д12: изготовление, поставка, ремонт.</p>
+  <div class="mcards" style="margin-top:32px">{modelsInOrder.map((m) => <ModelCard m={m} level={2} />)}</div>
+</Base>

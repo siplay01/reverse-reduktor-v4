@@ -1,0 +1,97 @@
+---
+import Base from "../layouts/Base.astro";
+import ModelCard from "../components/ModelCard.astro";
+import CertCard from "../components/CertCard.astro";
+import Requisites from "../components/Requisites.astro";
+import Icon from "../components/Icon.astro";
+import { modelsInOrder, modelView, assemblies, partsOf, sitePhotos } from "../lib/data";
+import { COMPANY, CERT, url } from "../lib/site";
+
+const hero = sitePhotos["hero-rr300-pair"];
+const fig1 = assemblies.find((a) => a.figure === 1)!;
+const org = {
+  "@context": "https://schema.org", "@type": "Organization", name: COMPANY.operator, legalName: COMPANY.full, telephone: COMPANY.phone, email: COMPANY.email,
+  taxID: COMPANY.inn, address: { "@type": "PostalAddress", postalCode: COMPANY.zip, addressLocality: "Барнаул", addressRegion: "Алтайский край", streetAddress: COMPANY.street, addressCountry: "RU" },
+};
+const services = [
+  { icon: "building-factory-2", t: "Изготовление", d: "Изготовление изделий судового машиностроения и разработка технической документации по согласованной с РКО документации.", href: "o-kompanii/" },
+  { icon: "tool", t: "Ремонт", d: "Дефектация и капитальный ремонт реверс-редукторов, ремонт муфт сцепления и рулевых гидравлических машин серии РГ.", href: "remont/" },
+  { icon: "headset", t: "Техническая поддержка", d: "Консультации по подбору, монтажу и эксплуатации реверс-редукторов, руководство по эксплуатации РР-300 и РР-238.", href: "dokumentaciya/" },
+  { icon: "package", t: "Запасные части", d: "Поставка запасных частей по заводским обозначениям из каталогов деталей и сборочных единиц.", href: "katalog/" },
+];
+---
+<Base title="Судовые реверс-редукторы РР-300, РР-238, 3Д6, 3Д12: изготовление, ремонт, запчасти" wide
+  description={`${COMPANY.operator}: изготовление, ремонт и техническая поддержка судовых реверс-редукторов РР-300, РР-238, 3Д6, 3Д12, каталоги запасных частей. Свидетельство РКО № ${CERT.no}.`}
+  jsonld={[org]}>
+  <section class="hero" aria-labelledby="h-hero">
+    <div class="wrap hero-in">
+      <div class="hero-text">
+        <p class="eyebrow">{COMPANY.operator}, г. Барнаул</p>
+        <h1 id="h-hero">Судовые реверс-редукторы: изготовление, ремонт и запасные части</h1>
+        <p class="lead">Гидравлические РР-300 и РР-238, механические 3Д6 и 3Д12. Дефектация и капитальный ремонт, техническая поддержка, поставка запчастей по заводским каталогам.</p>
+        <div class="btns">
+          <a class="btn" href={url("oborudovanie/")}>Реверс-редукторы</a>
+          <a class="btn ghost" href={url("katalog/")}>Каталоги запчастей</a>
+        </div>
+        <a class="hero-cert" href={url("o-kompanii/#svidetelstvo")}>
+          <Icon name="certificate" size={28} />
+          <span><b>Свидетельство о признании РКО № {CERT.no}</b><span>Российское Классификационное Общество, действует до {CERT.to}</span></span>
+        </a>
+      </div>
+      <figure class="hero-photo">
+        <img src={url(hero.f.src)} srcset={`${url(hero.t.src)} ${hero.t.w}w, ${url(hero.f.src)} ${hero.f.w}w`} sizes="(min-width: 1000px) 46vw, 100vw"
+          width={hero.f.w} height={hero.f.h} alt="Реверс-редукторы РР-300 в цехе после сборки" fetchpriority="high" decoding="async">
+      </figure>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <section class="sec" aria-labelledby="h-models">
+      <div class="sec-head"><h2 id="h-models">Реверс-редукторы</h2><a class="textlink" href={url("oborudovanie/")}>Все характеристики <Icon name="arrow-right" size={16} /></a></div>
+      <div class="mcards">{modelsInOrder.map((m) => <ModelCard m={m} />)}</div>
+    </section>
+
+    <section class="sec" aria-labelledby="h-services">
+      <div class="sec-head"><h2 id="h-services">Работы и услуги</h2></div>
+      <ul class="services">
+        {services.map((s) => <li><a href={url(s.href)}><Icon name={s.icon} size={28} /><b>{s.t}</b><span>{s.d}</span></a></li>)}
+      </ul>
+    </section>
+
+    <section class="sec" aria-labelledby="h-cert" id="svidetelstvo-glavnaya">
+      <div class="sec-head"><h2 id="h-cert">Признание Российского Классификационного Общества</h2></div>
+      <CertCard />
+    </section>
+
+    <section class="sec" aria-labelledby="h-cat">
+      <div class="sec-head"><h2 id="h-cat">Каталоги запасных частей</h2><a class="textlink" href={url("katalog/")}>Поиск по обозначению <Icon name="arrow-right" size={16} /></a></div>
+      <p class="muted" style="margin-top:-12px">Выберите узел на чертеже: номера позиций на рисунке соответствуют строкам спецификации, нужные детали добавляются в запрос.</p>
+      <ul class="catalogs">
+        {modelsInOrder.map((m) => {
+          const v = modelView[m.id];
+          const th = m.id === "rr300" ? fig1.drawing.t : (v.drawings[0] ?? v.photos[0]).t;
+          return <li><a href={url(`katalog/${m.slug}/`)}>
+            <span class="cimg"><img src={url(th.src)} width={th.w} height={th.h} alt="" loading="lazy" /></span>
+            <span class="ct"><b>Каталог запчастей {m.name}</b><span class="sku">{v.catalog}</span>
+              <span class="muted">{m.id === "rr300" ? `${assemblies.length} узлов по чертежам, ${partsOf(m.id).length} обозначений` : `${partsOf(m.id).length} обозначений`}</span></span>
+          </a></li>;
+        })}
+      </ul>
+    </section>
+
+    <section class="sec split req-sec" aria-labelledby="h-req">
+      <div>
+        <h2 id="h-req">Реквизиты</h2>
+        <Requisites />
+      </div>
+      <div class="contact-box">
+        <h2>Контакты</h2>
+        <p><a class="big-tel" href={`tel:${COMPANY.tel}`}>{COMPANY.phone}</a></p>
+        <p><a href={`mailto:${COMPANY.email}`}><Icon name="mail" size={18} /> {COMPANY.email}</a></p>
+        <p class="muted"><Icon name="map-pin" size={18} /> {COMPANY.address}</p>
+        <div class="btns" style="margin-top:20px"><a class="btn" href={url("zapros/")}>Отправить запрос</a></div>
+      </div>
+    </section>
+    <div style="height:72px"></div>
+  </div>
+</Base>

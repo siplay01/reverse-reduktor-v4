@@ -1,0 +1,20 @@
+---
+import Base from "../../layouts/Base.astro";
+import Requisites from "../../components/Requisites.astro";
+import { COMPANY, url } from "../../lib/site";
+const ld = { "@context": "https://schema.org", "@type": "Organization", name: COMPANY.operator, legalName: COMPANY.full, telephone: COMPANY.phone, email: COMPANY.email, taxID: COMPANY.inn,
+  address: { "@type": "PostalAddress", postalCode: COMPANY.zip, addressLocality: "Барнаул", addressRegion: "Алтайский край", streetAddress: COMPANY.street, addressCountry: "RU" } };
+---
+<Base title="Контакты" section="kontakty/" crumbs={[["kontakty/", "Контакты"]]} jsonld={[ld]}
+  description={`Контакты ${COMPANY.operator}, Барнаул: телефон ${COMPANY.phone}, e-mail ${COMPANY.email}, адрес, банковские реквизиты.`}>
+  <h1>Контакты</h1>
+  <div class="contact-grid">
+    <a class="cc" href={`tel:${COMPANY.tel}`}><span class="k">Телефон</span><b>{COMPANY.phone}</b></a>
+    <a class="cc" href={`mailto:${COMPANY.email}`}><span class="k">E-mail</span><b>{COMPANY.email}</b><span>заявки, вопросы по ремонту и запчастям</span></a>
+    <a class="cc" href={`https://yandex.ru/maps/?text=${encodeURIComponent(COMPANY.address)}`} target="_blank" rel="noopener"><span class="k">Адрес</span><b>г. Барнаул, {COMPANY.street}</b><span>Открыть на Яндекс Картах</span></a>
+  </div>
+  <div class="split">
+    <div><h2>Реквизиты</h2><Requisites /></div>
+    <div><h2>Запрос предложения</h2><p>Соберите позиции в списке запроса: письмо с обозначениями и количеством сформируется автоматически.</p><a class="btn" href={url("zapros/")}>Открыть список запроса</a></div>
+  </div>
+</Base>

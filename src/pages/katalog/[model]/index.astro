@@ -1,0 +1,41 @@
+---
+import Base from "../../../layouts/Base.astro";
+import PartsTable from "../../../components/PartsTable.astro";
+import Icon from "../../../components/Icon.astro";
+import { models, modelView, partsOf, assemblies, scans } from "../../../lib/data";
+import type { Model } from "../../../lib/data";
+import { url } from "../../../lib/site";
+export const getStaticPaths = () => models.map((m) => ({ params: { model: m.slug }, props: { m } }));
+const { m } = Astro.props as { m: Model };
+const list = partsOf(m.id);
+const v = modelView[m.id];
+const rr300 = m.id === "rr300";
+---
+<Base title={`Каталог запчастей реверс-редуктора ${m.name} ${v.catalog}`} section="katalog/"
+  crumbs={[["katalog/", "Каталоги запчастей"], [`katalog/${m.slug}/`, m.name]]}
+  description={`Каталог запасных частей ${m.kind.replace(/ий$/, "ого")} реверс-редуктора ${m.name} (${v.catalog})${rr300 ? `: ${assemblies.length} узлов по чертежам с номерами позиций` : ""}, заводские обозначения, запрос стоимости.`}>
+  <div class="sec-head" style="align-items:end">
+    <div>
+      <h1>Каталог запчастей {m.name} <span class="sku muted">{v.catalog}</span></h1>
+      <p class="lead" style="margin:0">{rr300
+        ? "Каталог деталей и сборочных единиц. Выберите узел: на чертеже указаны номера позиций, под чертежом спецификация с кнопкой «В запрос»."
+        : `${m.kind[0].toUpperCase() + m.kind.slice(1)} реверс-редуктор. Заводские обозначения запасных частей.`}</p>
+    </div>
+    <a class="btn ghost" href={url(`oborudovanie/${m.slug}/`)}>Реверс-редуктор {m.name}</a>
+  </div>
+  {rr300 && <>
+    <ul class="nodes" style="margin-top:32px">
+      {assemblies.map((a) => (
+        <li><a class="node" href={url(`katalog/rr-300/uzly/${a.slug}/`)}>
+          <span class="im"><img src={url(a.drawing.t.src)} width={a.drawing.t.w} height={a.drawing.t.h} alt="" loading="lazy" /></span>
+          <span class="t"><span class="n">Рис. {a.figure}</span><b>{a.title}</b></span>
+        </a></li>
+      ))}
+    </ul>
+    <p style="margin-top:20px"><a class="textlink" href={url("dokumentaciya/katalog-rr-300/")}><Icon name="book" size={18} />Каталог РР-300 в сканах, {scans.length} стр.</a></p>
+  </>}
+  <section class="sec" aria-labelledby="h-list">
+    <div class="sec-head"><h2 id="h-list">{rr300 ? "Все обозначения РР-300" : "Перечень запасных частей"}</h2></div>
+    <PartsTable list={list} showModels={false} />
+  </section>
+</Base>

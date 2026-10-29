@@ -1,0 +1,43 @@
+---
+// Plain parts list with a filter box: designation, name, model, node on the РР-300 drawing, «В запрос».
+import type { Part } from "../lib/data";
+import { modelNames, asmByFigure } from "../lib/data";
+import { url } from "../lib/site";
+interface Props { list: Part[]; showModels?: boolean; id?: string }
+const { list, showModels = true, id = "parts" } = Astro.props;
+const href = (p: Part) => {
+  const a = p.assemblies.find((x) => asmByFigure.has(x.figure));
+  return a ? url(`katalog/rr-300/uzly/${asmByFigure.get(a.figure)!.slug}/#poz-${a.pos}`) : "";
+};
+---
+<div class="ptable" data-ptable>
+  <form class="search" role="search" data-pfilter onsubmit="return false">
+    <label class="sr" for={`${id}-q`}>Поиск по обозначению или наименованию</label>
+    <input id={`${id}-q`} name="q" type="search" placeholder="Обозначение или наименование, например 525-16-110" autocomplete="off" spellcheck="false" enterkeyhint="search">
+  </form>
+  <p class="count" data-pcount aria-live="polite">Позиций: {list.length}</p>
+  <div class="tbl-wrap" tabindex="0" role="region" aria-label="Перечень запасных частей">
+    <table class="tbl">
+      <thead><tr>
+        <th scope="col">Обозначение</th><th scope="col">Наименование</th>
+        {showModels && <th scope="col">Реверс-редуктор</th>}
+        <th scope="col">Узел РР-300</th>
+        <th scope="col"><span class="sr">Действие</span></th>
+      </tr></thead>
+      <tbody>
+        {list.map((p) => {
+          const h = href(p);
+          const a = p.assemblies.find((x) => asmByFigure.has(x.figure));
+          return <tr data-row data-k={[p.designation, ...p.spellings].join("|")} data-n={p.name}>
+            <td><span class="sku">{p.designation}</span></td>
+            <td>{p.name}</td>
+            {showModels && <td class="nw">{modelNames(p.models).join(", ")}</td>}
+            <td class="nw">{a ? <a href={h}>рис. {a.figure}, поз. {a.pos}</a> : ""}</td>
+            <td><button type="button" class="btn ghost sm" data-rfq-add data-id={p.id} data-d={p.designation} data-n={p.name} data-href={h} aria-pressed="false">В запрос</button></td>
+          </tr>;
+        })}
+      </tbody>
+    </table>
+  </div>
+  <div class="empty" data-pempty hidden><p><b>Ничего не найдено.</b></p><p>Проверьте обозначение или отправьте его в <a href={url("zapros/")}>запросе</a>: подберём по каталогу.</p></div>
+</div>

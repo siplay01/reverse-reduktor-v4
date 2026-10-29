@@ -1,0 +1,41 @@
+---
+import Base from "../../layouts/Base.astro";
+import Requisites from "../../components/Requisites.astro";
+import CertCard from "../../components/CertCard.astro";
+import { sitePhotos } from "../../lib/data";
+import { COMPANY, CERT, url } from "../../lib/site";
+const shop = sitePhotos["hero-rr300-pair"];
+---
+<Base title="О предприятии" section="o-kompanii/" crumbs={[["o-kompanii/", "О предприятии"]]}
+  description={`${COMPANY.operator}, Барнаул: изготовление, ремонт и техническая поддержка судовых реверс-редукторов РР-300, РР-238, 3Д6, 3Д12, поставка запчастей. Свидетельство РКО № ${CERT.no}.`}>
+  <h1>О предприятии</h1>
+  <div class="split">
+    <div class="prose">
+      <p class="lead">{COMPANY.operator} (г. Барнаул): изготовление судовых реверс-редукторов, обслуживание, ремонт и техническая поддержка, продажа запасных частей к ним. Предприятие работает с заказчиками по всей России.</p>
+      <h2>Реверс-редукторы</h2>
+      <ul>
+        <li>Гидравлические: <a href={url("oborudovanie/rr-300/")}>РР-300</a> <span class="sku">СБ525-01-13</span>, <a href={url("oborudovanie/rr-238/")}>РР-238</a> <span class="sku">СБ238-25-01-13</span>.</li>
+        <li>Механические: <a href={url("oborudovanie/3d6/")}>3Д6</a> <span class="sku">СБ525-00-4</span>, <a href={url("oborudovanie/3d12/")}>3Д12</a> <span class="sku">СБ1225-00-5</span>.</li>
+      </ul>
+      <h2>Работы и услуги</h2>
+      <ul>
+        <li>изготовление изделий судового машиностроения и разработка технической документации;</li>
+        <li>дефектация и капитальный ремонт реверс-редукторов, ремонт муфт сцепления и рулевых гидравлических машин серии РГ (<a href={url("remont/")}>подробнее</a>);</li>
+        <li>техническая поддержка: подбор, монтаж и эксплуатация;</li>
+        <li>поставка запасных частей: фрикционные элементы, подшипники и уплотнения, валы и шестерни, корпусные детали, гидравлические компоненты (<a href={url("katalog/")}>каталоги</a>).</li>
+      </ul>
+    </div>
+    <figure class="cert crop43">
+      <img src={url(shop.t.src)} width={shop.t.w} height={shop.t.h} alt="Реверс-редукторы РР-300 в цехе" loading="lazy" />
+    </figure>
+  </div>
+  <section class="sec" id="svidetelstvo" aria-labelledby="h-cert">
+    <h2 id="h-cert">Свидетельство о признании РКО</h2>
+    <p class="muted">Выдал {CERT.issuer}.</p>
+    <CertCard />
+  </section>
+  <section class="sec" aria-labelledby="h-req">
+    <h2 id="h-req">Реквизиты</h2>
+    <div style="max-width:820px"><Requisites /></div>
+  </section>
+</Base>

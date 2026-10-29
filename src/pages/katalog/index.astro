@@ -1,0 +1,27 @@
+---
+import Base from "../../layouts/Base.astro";
+import PartsTable from "../../components/PartsTable.astro";
+import { sortedParts, modelsInOrder, modelView, partsOf, assemblies } from "../../lib/data";
+import { url } from "../../lib/site";
+const fig1 = assemblies.find((a) => a.figure === 1)!;
+---
+<Base title="Каталоги запасных частей к реверс-редукторам РР-300, РР-238, 3Д6, 3Д12" section="katalog/" crumbs={[["katalog/", "Каталоги запчастей"]]}
+  description={`Каталоги запасных частей к судовым реверс-редукторам: узлы РР-300 по чертежам с номерами позиций, поиск по заводскому обозначению, ${sortedParts.length} позиций.`}>
+  <h1>Каталоги запасных частей</h1>
+  <p class="lead">Выберите реверс-редуктор. В каталоге РР-300 деталь находится по чертежу узла: номер позиции на рисунке соответствует строке спецификации.</p>
+  <ul class="catalogs" style="margin:32px 0 0">
+    {modelsInOrder.map((m) => {
+      const v = modelView[m.id];
+      const th = m.id === "rr300" ? fig1.drawing.t : (v.drawings[0] ?? v.photos[0]).t;
+      return <li><a href={url(`katalog/${m.slug}/`)}>
+        <span class="cimg"><img src={url(th.src)} width={th.w} height={th.h} alt="" loading="lazy" /></span>
+        <span class="ct"><b>Каталог запчастей {m.name}</b><span class="sku">{v.catalog}</span>
+          <span class="muted">{m.id === "rr300" ? `${assemblies.length} узлов по чертежам, ${partsOf(m.id).length} обозначений` : `${partsOf(m.id).length} обозначений`}</span></span>
+      </a></li>;
+    })}
+  </ul>
+  <section class="sec" aria-labelledby="h-all">
+    <div class="sec-head"><h2 id="h-all">Поиск по всем каталогам</h2></div>
+    <PartsTable list={sortedParts} />
+  </section>
+</Base>

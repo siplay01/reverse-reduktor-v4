@@ -1,0 +1,43 @@
+---
+import Base from "../../layouts/Base.astro";
+import Requisites from "../../components/Requisites.astro";
+import CertCard from "../../components/CertCard.astro";
+import { manual } from "../../lib/data";
+import { COMPANY, CERT, url } from "../../lib/site";
+const subject = encodeURIComponent("Приглашение к участию в закупке");
+---
+<Base title="Тендеры и государственные закупки" section="tendery/" crumbs={[["tendery/", "Тендеры"]]}
+  description={`Участие в государственных контрактах и закупках: изготовление и поставка реверс-редукторов РР-300, РР-238, 3Д6, 3Д12, запчасти, ремонт. Реквизиты ${COMPANY.operator}, свидетельство РКО № ${CERT.no}.`}>
+  <h1>Тендеры и государственные закупки</h1>
+  <div class="split">
+    <div class="prose">
+      <p class="lead">Предприятие работает по всей России и участвует в государственных контрактах и закупках.</p>
+      <h2>Предмет закупок</h2>
+      <ul>
+        <li>Изготовление и поставка судовых реверс-редукторов <a href={url("oborudovanie/rr-300/")}>РР-300</a>, <a href={url("oborudovanie/rr-238/")}>РР-238</a>, <a href={url("oborudovanie/3d6/")}>3Д6</a>, <a href={url("oborudovanie/3d12/")}>3Д12</a>.</li>
+        <li>Поставка запасных частей по заводским обозначениям: <a href={url("katalog/")}>каталоги запчастей</a>.</li>
+        <li>Дефектация и капитальный <a href={url("remont/")}>ремонт</a> реверс-редукторов, ремонт муфт сцепления и рулевых гидравлических машин серии РГ.</li>
+      </ul>
+      <h2>Как пригласить к участию</h2>
+      <ol class="steps">
+        <li><b>Приглашение</b><span>Направьте ссылку на закупку или техническое задание на <a href={`mailto:${COMPANY.email}?subject=${subject}`}>{COMPANY.email}</a>.</span></li>
+        <li><b>Спецификация</b><span>Перечень позиций можно собрать в <a href={url("zapros/")}>списке запроса</a>: обозначения и количество попадут в письмо.</span></li>
+        <li><b>Ответ</b><span>Уточним исполнение и сроки, подготовим коммерческое предложение и документы.</span></li>
+      </ol>
+      <h2>Документы участника</h2>
+      <ul>
+        <li><a href={url(CERT.pdf)} target="_blank" rel="noopener">{CERT.title}</a> <span class="muted small">PDF, действует до {CERT.to}</span></li>
+        <li><a href={url(manual.href)}>{manual.title}</a> <span class="muted small">PDF</span></li>
+        <li><a href={url("dokumentaciya/katalog-rr-300/")}>Каталог деталей и сборочных единиц РР-300</a> <span class="muted small">сканы</span></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Реквизиты участника</h2>
+      <Requisites />
+    </div>
+  </div>
+  <section class="sec" aria-labelledby="h-cert">
+    <h2 id="h-cert">Свидетельство о признании РКО</h2>
+    <CertCard />
+  </section>
+</Base>

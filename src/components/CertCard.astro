@@ -1,0 +1,29 @@
+---
+// РКО certificate block: thumbnail, number, validity, scope, PDF. Used on home, О предприятии, Тендеры.
+import Icon from "./Icon.astro";
+import { CERT, url } from "../lib/site";
+interface Props { scope?: boolean; level?: 2 | 3 }
+const { scope = true, level = 3 } = Astro.props;
+const H = `h${level}` as "h2" | "h3";
+---
+<div class="certcard">
+  <a class="certimg" href={url(CERT.img.f.src)} data-zoom aria-label={`Открыть свидетельство РКО № ${CERT.no} в полном размере`}>
+    <img src={url(CERT.img.t.src)} width={CERT.img.t.w} height={CERT.img.t.h} alt={`${CERT.title}, выдано ООО «Дело»`} loading="lazy" />
+  </a>
+  <div class="certbody">
+    <p class="certkind"><Icon name="certificate" size={18} />Российское Классификационное Общество</p>
+    <H>Свидетельство о признании № {CERT.no}</H>
+    <dl class="certdates">
+      <div><dt>Вступило в силу</dt><dd class="num">{CERT.from}</dd></div>
+      <div><dt>Действует до</dt><dd class="num">{CERT.to}</dd></div>
+    </dl>
+    {scope && <>
+      <p class="small muted" style="margin-bottom:6px">Признаны виды работ:</p>
+      <ul class="certscope">{CERT.scope.map((s) => <li>{s}</li>)}</ul>
+    </>}
+    <div class="btns">
+      <a class="btn sm" href={url(CERT.pdf)} target="_blank" rel="noopener"><Icon name="file-type-pdf" size={18} />Открыть PDF</a>
+      <a class="btn ghost sm" href={url(CERT.pdf)} download={`Свидетельство РКО ${CERT.no}.pdf`}><Icon name="download" size={18} />Скачать</a>
+    </div>
+  </div>
+</div>

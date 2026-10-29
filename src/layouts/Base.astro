@@ -1,0 +1,140 @@
+---
+import "@fontsource-variable/golos-text/index.css";
+import "@fontsource-variable/jetbrains-mono/index.css";
+import "../styles/global.css";
+import Icon from "../components/Icon.astro";
+import { COMPANY, CERT, SETTINGS, url } from "../lib/site";
+// Preload the Cyrillic text face so the hero text does not re-render late.
+import golosCyr from "@fontsource-variable/golos-text/files/golos-text-cyrillic-wght-normal.woff2?url";
+
+interface Props {
+  title: string;
+  description: string;
+  crumbs?: [string, string][]; // [path, label]; the last one is the current page
+  section?: string;
+  image?: string; // public path for og:image
+  jsonld?: object[];
+  wide?: boolean;
+}
+const { title, description, crumbs = [], section, image, jsonld = [], wide = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL(url(image ?? "img/og.jpg"), Astro.site).href;
+const NAV: [string, string][] = [
+  ["oborudovanie/", "Реверс-редукторы"], ["katalog/", "Каталоги запчастей"], ["remont/", "Ремонт"],
+  ["dokumentaciya/", "Документация"], ["tendery/", "Тендеры"], ["o-kompanii/", "О предприятии"], ["kontakty/", "Контакты"],
+];
+const trail: [string, string][] = crumbs.length ? [["", "Главная"], ...crumbs] : [];
+const ld = [
+  ...jsonld,
+  ...(trail.length
+    ? [{ "@context": "https://schema.org", "@type": "BreadcrumbList",
+        itemListElement: trail.map(([p, n], i) => ({ "@type": "ListItem", position: i + 1, name: n, item: new URL(url(p), Astro.site).href })) }]
+    : []),
+];
+const fullTitle = title.includes(COMPANY.brand) ? title : `${title} | ${COMPANY.brand}`;
+---
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{fullTitle}</title>
+<link rel="preload" href={golosCyr} as="font" type="font/woff2" crossorigin>
+<meta name="description" content={description}>
+<meta name="robots" content={SETTINGS.indexable ? "index, follow" : "noindex, nofollow"}>
+<link rel="canonical" href={canonical}>
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16191c" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:site_name" content={COMPANY.brand}>
+<meta property="og:title" content={title}>
+<meta property="og:description" content={description}>
+<meta property="og:url" content={canonical}>
+<meta property="og:image" content={ogImage}>
+<script is:inline>(function(){try{var t=new URLSearchParams(location.search).get("tema");if(t&&/^[123]$/.test(t))localStorage.setItem("rr-tema",t);t=t||localStorage.getItem("rr-tema");if(t&&t!=="1")document.documentElement.dataset.tema=t}catch(e){}})()</script>
+<link rel="icon" href={url("favicon.svg")} type="image/svg+xml">
+<link rel="sitemap" href={url("sitemap-index.xml")}>
+{ld.map((o) => <script type="application/ld+json" set:html={JSON.stringify(o)} />)}
+</head>
+<body>
+<a class="skip" href="#main">Перейти к содержимому</a>
+<div class="topbar"><div class="wrap">
+  <span class="tb-org">{COMPANY.operator}: изготовление, ремонт и техническая поддержка судовых реверс-редукторов</span>
+  <a class="tb-cert" href={url("o-kompanii/#svidetelstvo")}><Icon name="certificate" size={16} /><span class="tb-long">Свидетельство </span>РКО № {CERT.no}</a>
+  <a href={`mailto:${COMPANY.email}`}><Icon name="mail" size={16} />{COMPANY.email}</a>
+  <a class="tb-tel" href={`tel:${COMPANY.tel}`}><Icon name="phone" size={16} />{COMPANY.phone}</a>
+</div></div>
+<header class="header"><div class="wrap">
+  <a class="brand" href={url()} aria-label={`${COMPANY.brand}: на главную`}>
+    <span class="mark" aria-hidden="true"><Icon name="settings" size={22} /></span>
+    <span><b>{COMPANY.brand}</b><small>Судовые реверс-редукторы РР-300, РР-238, 3Д6, 3Д12</small></span>
+  </a>
+  <nav class="nav" id="nav" aria-label="Основное меню">
+    {NAV.map(([p, label]) => <a href={url(p)} aria-current={section === p ? "page" : undefined}>{label}</a>)}
+    <a class="nav-phone" href={`tel:${COMPANY.tel}`}>{COMPANY.phone}</a>
+  </nav>
+  <button class="menu-btn" type="button" aria-controls="nav" aria-expanded="false" data-menu><span class="sr">Меню</span><Icon name="menu-2" size={22} /></button>
+  <a class="rfq-link" href={url("zapros/")} aria-current={section === "zapros/" ? "page" : undefined}>
+    <Icon name="clipboard-list" size={18} /><span class="lbl">Запрос</span><span class="cnt" data-rfq-count></span><span class="sr">Список запроса</span>
+  </a>
+</div></header>
+<main id="main" tabindex="-1">
+  <slot name="before" />
+  <div class={wide ? "" : "wrap page"}>
+    {trail.length > 0 && (
+      <nav aria-label="Навигационная цепочка"><ol class="crumbs">
+        {trail.map(([p, n], i) => i < trail.length - 1 ? <li><a href={url(p)}>{n}</a></li> : <li aria-current="page">{n}</li>)}
+      </ol></nav>
+    )}
+    <slot />
+  </div>
+</main>
+<footer class="footer"><div class="wrap">
+  <div class="cols">
+    <div>
+      <h2>{COMPANY.operator}</h2>
+      <p>Изготовление, ремонт и техническая поддержка судовых реверс-редукторов, поставка запасных частей.</p>
+      <p class="muted">ИНН {COMPANY.inn}, КПП {COMPANY.kpp}<br>ОГРН {COMPANY.ogrn}</p>
+      <p><a href={url("o-kompanii/#svidetelstvo")}>Свидетельство РКО № {CERT.no}</a></p>
+    </div>
+    <div>
+      <h2>Каталоги запчастей</h2>
+      <ul>
+        <li><a href={url("katalog/rr-300/")}>РР-300 <span class="muted">СБ525-01-13</span></a></li>
+        <li><a href={url("katalog/rr-238/")}>РР-238 <span class="muted">СБ238-25-01-13</span></a></li>
+        <li><a href={url("katalog/3d6/")}>3Д6 <span class="muted">СБ525-00-4</span></a></li>
+        <li><a href={url("katalog/3d12/")}>3Д12 <span class="muted">СБ1225-00-5</span></a></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Предприятие</h2>
+      <ul>
+        <li><a href={url("o-kompanii/")}>О предприятии</a></li>
+        <li><a href={url("remont/")}>Ремонт и сервис</a></li>
+        <li><a href={url("tendery/")}>Тендеры и госзакупки</a></li>
+        <li><a href={url("dostavka-i-oplata/")}>Доставка и оплата</a></li>
+        <li><a href={url("dokumentaciya/")}>Документация</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Контакты</h2>
+      <p><a href={`tel:${COMPANY.tel}`}><b>{COMPANY.phone}</b></a></p>
+      <p><a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a></p>
+      <p class="muted">{COMPANY.address}</p>
+    </div>
+  </div>
+  <div class="legal"><span>© {COMPANY.full}</span><span>Цены и сроки поставки по запросу</span></div>
+</div></footer>
+<div id="live" class="sr" aria-live="polite"></div>
+<div class="toast" data-toast hidden role="status"><span data-toast-text></span><a href={url("zapros/")}>Открыть список</a></div>
+<dialog class="lightbox" data-lightbox aria-label="Просмотр изображения">
+  <div class="inner"><img alt="" data-lightbox-img></div>
+  <button type="button" class="btn ink close" data-lightbox-close><Icon name="x" size={18} />Закрыть</button>
+</dialog>
+<script>
+  import "../scripts/app.ts";
+</script>
+</body>
+</html>
