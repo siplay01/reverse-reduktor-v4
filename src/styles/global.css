@@ -28,7 +28,7 @@
 
   --r: 4px;
   --header-h: 76px;
-  --wrap: 1280px;
+  --wrap: 1360px;
   --gut: 16px;
 }
 :root[data-tema="2"] { --accent: #00676a; --accent-hover: #004f52; --accent-soft: #e2f1f1; --top-bg: #0d3b3d; }
@@ -101,21 +101,21 @@ svg { flex: none; }
 .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; flex: none; }
 .brand .mark { width: 40px; height: 40px; display: grid; place-items: center; background: var(--accent); color: var(--on-accent); border-radius: var(--r); }
 .brand b { display: block; font-size: 20px; line-height: 1.05; font-weight: 800; letter-spacing: -0.02em; }
-.brand small { display: block; font-size: 12px; color: var(--muted); margin-top: 3px; letter-spacing: 0; }
+.brand small { display: none; }
 .nav { display: flex; gap: 2px; margin-left: auto; }
-.nav a { white-space: nowrap; text-decoration: none; font-size: 15px; font-weight: 500; padding: 0 9px; min-height: 44px; display: flex; align-items: center; position: relative; color: var(--text); }
+.nav a { white-space: nowrap; text-decoration: none; font-size: 15px; font-weight: 500; padding: 0 7px; min-height: 44px; display: flex; align-items: center; position: relative; color: var(--text); }
 .nav a:hover { color: var(--accent); }
 .nav a[aria-current="page"] { color: var(--accent); }
-.nav a[aria-current="page"]::after { content: ""; position: absolute; left: 10px; right: 10px; bottom: 0; height: 3px; background: var(--accent); }
+.nav a[aria-current="page"]::after { content: ""; position: absolute; left: 7px; right: 7px; bottom: 0; height: 3px; background: var(--accent); }
 .h-phone { flex: none; min-width: 44px; min-height: 44px; justify-content: center; display: flex; align-items: center; gap: 8px; text-decoration: none; font-weight: 700; font-size: 15px; white-space: nowrap; }
 .rfq-link { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; background: var(--accent); color: var(--on-accent); text-decoration: none; font-weight: 600; font-size: 15px; flex: none; border-radius: var(--r); }
 .rfq-link:hover { background: var(--accent-hover); }
 .rfq-link .cnt { min-width: 22px; height: 22px; padding: 0 6px; background: var(--on-accent); color: var(--accent); font-size: 12px; font-weight: 700; display: inline-grid; place-items: center; font-variant-numeric: tabular-nums; border-radius: 99px; }
 .rfq-link .cnt:empty { display: none; }
 .menu-btn { flex: none; display: none; width: 44px; height: 44px; border: 1px solid var(--line); background: var(--surface); place-items: center; cursor: pointer; border-radius: var(--r); }
-@media (max-width: 1599px) { .brand small { display: none; } }
 .tb-tel { font-weight: 700; }
-@media (max-width: 1279px) {
+@media (min-width: 1440px) { .nav a { font-size: 14px; } }
+@media (max-width: 1439px) {
   .menu-btn { display: grid; margin-left: auto; }
   .h-phone { display: none; }
   .nav { display: none; position: absolute; left: 0; right: 0; top: var(--header-h); flex-direction: column; gap: 0; background: var(--surface); border-bottom: 1px solid var(--line);
